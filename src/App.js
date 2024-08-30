@@ -1,20 +1,20 @@
-import CreatePhoto from './features/photos/create';
-import PhotosList from './features/photos/list';
-import Suggestion from './features/suggestion';
+import React from 'react';
+import { Provider } from 'react-redux';
+import { store } from './app/store';
+import AddPhoto from './features/photos/create';
+import PhotoList from './features/photos/list';
 import SearchBar from './features/search/search-bar';
-import './App.css';
 
 function App() {
   return (
-    <>
-      <h1>DOGGIEGRAM</h1>
-      <div className="create-photo-container">
-        <CreatePhoto />
-        <Suggestion />
-      </div>
-      <SearchBar />
-      <PhotosList />
-    </>
+    <Provider store={store}>
+      <main>
+        <h1>Doggiegram</h1>
+        <SearchBar />
+        <AddPhoto />
+        <PhotoList />
+      </main>
+    </Provider>
   );
 }
 
