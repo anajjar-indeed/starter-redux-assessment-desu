@@ -1,6 +1,6 @@
-# Starter redux assessment: Doggiegram
+#Doggiegram
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Allows to show and add dogs with their pictures
 
 ## Available scripts
 
