@@ -9,7 +9,6 @@ const PhotoList = () => {
   const handleRemove = (id) => {
     dispatch(removePhoto(id));
   };
-
   return (
     <div>
       <h2>Dog Photos</h2>
