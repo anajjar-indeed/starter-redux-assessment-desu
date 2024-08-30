@@ -1,37 +1,38 @@
-import { useSelector, useDispatch } from 'react-redux';
-import {
-  // Task 7: Import the `removePhoto()` action creator from the photos slice
-  selectAllPhotos,
-  // Task 13: Import the `selectFilteredPhotos()` selector from the photos slice
-} from '../photos.slice';
-import './list.css';
+import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { removePhoto, selectFilteredPhotos } from '../photos.slice';
 
-export default function PhotosList() {
-  // Task 14: Call `useSelector()` below with `selectFilteredPhotos` instead of `selectAllPhotos`
-  const photos = useSelector(selectAllPhotos);
-  // Task 8: Store a reference to the Redux store's dispatch method in a variable called `dispatch`
+const PhotoList = () => {
+  const dispatch = useDispatch();
+  const photos = useSelector(selectFilteredPhotos);
 
-  function handleDeleteButtonClick(id) {
-    // Task 9: Dispatch the `removePhoto()` action creator, passing in the id
-  }
+  const handleRemove = (id) => {
+    dispatch(removePhoto(id));
+  };
 
-  const photosListItems = photos.map(({ id, caption, imageUrl }) => (
-    <li key={id}>
-      <img alt={caption} src={imageUrl} />
-      <div>
-        <p>{caption}</p>
-        <button
-          data-testid={`${caption}-button`}
-          onClick={() => handleDeleteButtonClick(id)}>
-          Delete
-        </button>
-      </div>
-    </li>
-  ));
-
-  return photosListItems.length > 0 ? (
-    <ul>{photosListItems}</ul>
-  ) : (
-    <h3>No doggies to display...</h3>
+  return (
+    <div>
+      <h2>Dog Photos</h2>
+      {photos.length === 0 ? (
+        <p>No photos available</p>
+      ) : (
+        <ul>
+          {photos.map(photo => (
+            <li key={photo.id}>
+              <img src={photo.imageUrl} alt={photo.caption} width="100" />
+              <p>{photo.caption}</p>
+              <button
+                data-testid={`${photo.caption.toLowerCase().replace(/\s+/g, '-')}-button`}
+                onClick={() => handleRemove(photo.id)}
+              >
+                Delete
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
   );
-}
+};
+
+export default PhotoList;
