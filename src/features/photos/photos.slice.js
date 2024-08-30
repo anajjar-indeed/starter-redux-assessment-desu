@@ -15,9 +15,7 @@ export const photosSlice = createSlice({
 });
 
 export const { addPhoto, removePhoto } = photosSlice.actions;
-
 export const selectAllPhotos = (state) => state.photos;
-
 export const selectFilteredPhotos = (state) => {
   const searchTerm = state.search.searchTerm.toLowerCase();
   return state.photos.filter(photo =>
