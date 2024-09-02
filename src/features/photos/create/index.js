@@ -1,45 +1,53 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { addPhoto } from '../photos.slice';
+import './create.css';
 
-const AddPhoto = () => {
+export default function CreatePhoto() {
+  const [formData, setFormData] = useState({ imageUrl: '', caption: '' });
+  // Task 4: Store a reference to the Redux store's dispatch method in a variable called `dispatch`  : Done
   const dispatch = useDispatch();
-  const [imageUrl, setImageUrl] = useState('');
-  const [caption, setCaption] = useState('');
 
-  const handleSubmit = (event) => {
+  function handleChange({ target: { name, value } }) {
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  }
+
+  function handleSubmit(event) {
     event.preventDefault();
-    const newPhoto = {
-      id: Date.now(),
-      imageUrl,
-      caption,
-    };
-    dispatch(addPhoto(newPhoto));
-    setImageUrl('');
-    setCaption('');
-  };
+    // Task 5: Dispatch the `addPhoto()` action creator, passing in the form data : Done
+    dispatch(addPhoto(formData));
+    setFormData({ imageUrl: '', caption: '' });
+  }
 
   return (
-    <form onSubmit={handleSubmit}>
-      <label>
-        Enter your image's url:
+    <form className="create-form" onSubmit={handleSubmit}>
+      <h2>Add a dog</h2>
+      <div>
+        <label htmlFor="url">Enter your image's url: </label>
         <input
+          id="url"
+          name="imageUrl"
+          onChange={handleChange}
+          placeholder="e.g., https://images.dog.ceo/breeds/australian-shepherd/pepper.jpg"
           type="text"
-          value={imageUrl}
-          onChange={(e) => setImageUrl(e.target.value)}
+          value={formData.imageUrl}
         />
-      </label>
-      <label>
-        Enter your image's caption:
+      </div>
+      <div>
+        <label htmlFor="caption">Enter your image's caption: </label>
         <input
+          id="caption"
+          name="caption"
+          onChange={handleChange}
+          placeholder="e.g., Australian Shepherd"
           type="text"
-          value={caption}
-          onChange={(e) => setCaption(e.target.value)}
+          value={formData.caption}
         />
-      </label>
-      <button type="submit">Submit</button>
+      </div>
+      <input type="submit" />
     </form>
   );
-};
-
-export default AddPhoto;
+}
