@@ -1,37 +1,36 @@
-import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { removePhoto, selectFilteredPhotos } from '../photos.slice';
+import { useSelector, useDispatch } from 'react-redux';
+import {
+  removePhoto,
+  selectAllPhotos,
+  selectFilteredPhotos
+} from '../photos.slice';
+import './list.css';
 
-const PhotoList = () => {
-  const dispatch = useDispatch();
+export default function PhotosList() {
   const photos = useSelector(selectFilteredPhotos);
-
-  const handleRemove = (id) => {
+  const dispatch = useDispatch();
+  function handleDeleteButtonClick(id) {
     dispatch(removePhoto(id));
-  };
-  return (
-    <div>
-      <h2>Dog Photos</h2>
-      {photos.length === 0 ? (
-        <p>No photos available</p>
-      ) : (
-        <ul>
-          {photos.map(photo => (
-            <li key={photo.id}>
-              <img src={photo.imageUrl} alt={photo.caption} width="100" />
-              <p>{photo.caption}</p>
-              <button
-                data-testid={`${photo.caption.toLowerCase().replace(/\s+/g, '-')}-button`}
-                onClick={() => handleRemove(photo.id)}
-              >
-                Delete
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
-  );
-};
+    // Task 9: Dispatch the `removePhoto()` action creator, passing in the id
+  }
 
-export default PhotoList;
+  const photosListItems = photos.map(({ id, caption, imageUrl }) => (
+    <li key={id}>
+      <img alt={caption} src={imageUrl} />
+      <div>
+        <p>{caption}</p>
+        <button
+          data-testid={`${caption}-button`}
+          onClick={() => handleDeleteButtonClick(id)}>
+          Delete
+        </button>
+      </div>
+    </li>
+  ));
+
+  return photosListItems.length > 0 ? (
+    <ul>{photosListItems}</ul>
+  ) : (
+    <h3>No doggies to display...</h3>
+  );
+}
