@@ -1,26 +1,27 @@
-import React from 'react';
-import { useDispatch } from 'react-redux';
-import { setSearchTerm } from '../search.slice';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectSearchTerm, setSearchTerm } from '../search.slice';
+import './search-bar.css';
 
-const SearchBar = () => {
+export default function SearchBar() {
+  const searchTerm = useSelector(selectSearchTerm);
+  // Task 10: Store a reference to the Redux store's dispatch method in a variable called `dispatch`
   const dispatch = useDispatch();
-
-  const handleChange = (event) => {
-    dispatch(setSearchTerm(event.target.value));
-  };
+  function handleChange({ target: { value } }) {
+    dispatch(setSearchTerm(value));
+    // Task 11: Dispatch the `setSearchTerm()` action creator, passing in the value of the search input
+  }
 
   return (
-    <div>
-      <label htmlFor="searchbox">Search by caption:</label>
+    <form className="search-bar">
+      <label htmlFor="search">Search by caption: </label>
       <input
-        id="searchbox"
-        role="searchbox"
-        type="text"
+        id="search"
+        name="search"
         onChange={handleChange}
-        aria-label="Search by caption:"
+        placeholder="e.g., terrier"
+        type="search"
+        value={searchTerm}
       />
-    </div>
+    </form>
   );
-};
-
-export default SearchBar;
+}
