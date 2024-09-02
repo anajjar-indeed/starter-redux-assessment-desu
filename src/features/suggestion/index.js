@@ -1,34 +1,49 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchSuggestion, selectSuggestion } from '../suggestion/suggestion.slice';
+import {
+  fetchSuggestion,
+  selectError,
+  selectLoading,
+  selectSuggestion
+  // Task 18: Import the `selectSuggestion()` selector from the suggestion slice
+} from './suggestion.slice';
+import './suggestion.css';
 
-const Suggestion = () => {
+export default function Suggestion() {
+  // Task 19: Call useSelector() with the selectSuggestion() selector
+  const suggestion = useSelector(selectSuggestion);
+  // The component needs to access the `imageUrl` and `caption` properties of the suggestion object.
+  const loading = useSelector(selectLoading);
+  const error = useSelector(selectError);
   const dispatch = useDispatch();
-  const { suggestion, status, error } = useSelector(selectSuggestion);
 
   useEffect(() => {
-    dispatch(fetchSuggestion());
+    async function loadSuggestion() {
+      // Task 20: Dispatch the fetchSuggestion() action creator
+      dispatch(fetchSuggestion());
+    }
+    loadSuggestion();
   }, [dispatch]);
 
-  if (status === 'loading') {
-    return <p>Loading suggestion...</p>;
-  }
-
-  if (status === 'failed') {
-    return <p>Error: {error}</p>;
-  }
-
-  if (!suggestion) {
-    return <p>No suggestion available</p>;
+  let render;
+  if (loading) {
+    render = <h3>Loading...</h3>;
+  } else if (error) {
+    render = <h3>Sorry, we're having trouble loading the suggestion.</h3>;
+  } else if (suggestion){
+    // Task 21: Enable the two JSX lines below needed to display the suggestion on the page
+    render = (
+      <>
+        <img alt={suggestion.caption} src={suggestion.imageUrl} />
+        <p>{suggestion.caption}</p> 
+      </>
+    );
   }
 
   return (
-    <div>
+    <section className="suggestion-container">
       <h2>Suggestion of the Day</h2>
-      <img src={suggestion.imageUrl} alt={suggestion.caption} width="100" />
-      <p>{suggestion.caption}</p>
-    </div>
+      {render}
+    </section>
   );
-};
-
-export default Suggestion;
+}
