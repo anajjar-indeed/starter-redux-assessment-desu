@@ -1,36 +1,52 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
-// Async thunk to fetch suggestion
-export const fetchSuggestion = createAsyncThunk('suggestions/fetchSuggestion', async () => {
-  const response = await fetch('http://localhost:3004/api/suggestion');
-  const data = await response.json();
-  return data.data;
-});
+//export const fetchSuggestion =
+  //createAsyncThunk(/* Task 15: Complete the `createAsyncThunk()` function to load a suggestion from this URL: http://localhost:3004/api/suggestion */);
 
-const suggestionsSlice = createSlice({
-  name: 'suggestions',
-  initialState: {
-    suggestion: null,
-    status: 'idle',
-    error: null,
-  },
+  export const fetchSuggestion = createAsyncThunk(
+    'suggestion/fetchSuggestion',
+    async (arg, thunkAPI) => {
+      const response = await fetch('http://localhost:3004/api/suggestion');
+      const { data } = await response.json();
+      return data;
+    }
+  );
+
+const initialState = {
+  suggestion: '',
+  loading: false,
+  error: false,
+};
+
+const options = {
+  name: 'suggestion',
+  initialState,
   reducers: {},
-  extraReducers: (builder) => {
-    builder
-      .addCase(fetchSuggestion.pending, (state) => {
-        state.status = 'loading';
-      })
-      .addCase(fetchSuggestion.fulfilled, (state, action) => {
-        state.status = 'succeeded';
-        state.suggestion = action.payload;
-      })
-      .addCase(fetchSuggestion.rejected, (state, action) => {
-        state.status = 'failed';
-        state.error = action.error.message;
-      });
+    /* Task 16: Inside `extraReducers`, add reducers to handle all three promise lifecycle states - pending, fulfilled, and rejected - for the `fetchSuggestion()` call */
+  extraReducers: {
+    [fetchSuggestion.pending]: (state) => {
+      state.loading = true;
+      state.error = false;
+    },
+    [fetchSuggestion.fulfilled]: (state,  { payload: { imageUrl, caption } }) => {
+      state.suggestion = { imageUrl, caption }; 
+      state.loading = false;
+      state.error = false;
+    },
+    [fetchSuggestion.rejected]: (state) => {
+      state.loading = false;
+      state.error = true;
+    },
+    
   },
-});
+};
 
-export default suggestionsSlice.reducer;
-export const selectSuggestion = (state) => state.suggestions.suggestion;
-export const selectSuggestionStatus = (state) => state.suggestions.status;
+const suggestionSlice = createSlice(options);
+
+export default suggestionSlice.reducer;
+
+// Task 17: Create a selector, called `selectSuggestion`, for the `suggestion` state variable and export it from the file
+export const selectSuggestion = (state) => state.suggestion.suggestion;
+
+export const selectLoading = (state) => state.suggestion.loading;
+export const selectError = (state) => state.suggestion.error;
