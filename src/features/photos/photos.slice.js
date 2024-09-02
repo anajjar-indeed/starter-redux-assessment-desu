@@ -1,26 +1,44 @@
 import { createSlice } from '@reduxjs/toolkit';
-import photosData from './photos.data';
+import { selectSearchTerm } from '../search/search.slice';
+import photos from './photos.data.js';
 
-export const photosSlice = createSlice({
-  name: 'photos',
-  initialState: photosData,
-  reducers: {
-    addPhoto: (state, action) => {
-      state.push(action.payload);
-    },
-    removePhoto: (state, action) => {
-      return state.filter(photo => photo.id !== action.payload);
-    },
-  },
-});
-
-export const { addPhoto, removePhoto } = photosSlice.actions;
-export const selectAllPhotos = (state) => state.photos;
-export const selectFilteredPhotos = (state) => {
-  const searchTerm = state.search.searchTerm.toLowerCase();
-  return state.photos.filter(photo =>
-    photo.caption.toLowerCase().includes(searchTerm)
-  );
+const initialState = {
+  photos,
 };
 
+const options = {
+  name: 'photos',
+  initialState,
+  reducers: {
+    addPhoto: (state, action) => {
+      state.photos.unshift(action.payload);
+    },
+    removePhoto: (state, action) => {
+      const index = state.photos.findIndex(photo => photo.id === action.payload);
+      if (index !== -1) {
+        state.photos.splice(index, 1);
+      }
+    }
+  },
+};
+
+const photosSlice = createSlice(options);
+
+export const { addPhoto, removePhoto } = photosSlice.actions;
+
 export default photosSlice.reducer;
+
+export const selectAllPhotos = (state) => state.photos.photos;
+
+
+export const selectFilteredPhotos = (state) => {
+  const searchTerm = selectSearchTerm(state);
+  const { photos } = state.photos;
+ if(!searchTerm){
+  return photos;
+ }
+ return photos.filter(photo => 
+  photo.caption.toLowerCase().includes(searchTerm.toLowerCase())
+);
+
+};
